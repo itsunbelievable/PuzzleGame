@@ -7,8 +7,6 @@ public class Tile : MonoBehaviour
 {
     private Material mat;
 
-    public delegate void TileClicked(object sender, EventArgs e);
-    public event TileClicked OnTileClicked;
     public int row, column;
     void Awake()
     {
@@ -21,12 +19,6 @@ public class Tile : MonoBehaviour
     {
         get { return mat.color; }
         set { mat.color = value; }
-    }
-
-    void Click(Tile reciever)
-    {
-        if (OnTileClicked != null)
-            OnTileClicked(reciever, EventArgs.Empty);
     }
 }
 	
