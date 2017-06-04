@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class GameScreen : MonoBehaviour
@@ -9,17 +10,23 @@ public class GameScreen : MonoBehaviour
     public Grid gridScript;
     public Blocks blocksScript;
     private Camera mainCam;
-    List<Tile> added;
+    List<Tile> addedTiles;
+    int score, hiscore;
+    public Text scoreText, hiScoreText, gameOverText;
+    public Button restart;
+
     void Awake()
     {
         gridScript = GetComponent<Grid>();
-        gridScript.GridSetup();
-
+        
         blocksScript = GetComponent<Blocks>();
         blocksScript.CreateBlocks(GetRandom());
 
         mainCam = Camera.main;
-        added = new List<Tile>();
+        addedTiles = new List<Tile>();
+
+        Restart();
+        restart.onClick.AddListener(Restart);
     }
 
     private void TileClicked(Tile clickedTile)
@@ -27,9 +34,21 @@ public class GameScreen : MonoBehaviour
         if (clickedTile.HasColor)
             return;
         clickedTile.Color = blocksScript.GetTile.Color;
-        added.Add(clickedTile);
+        addedTiles.Add(clickedTile);
+
+        if (gridScript.isFilled)
+        {
+            gameOverText.text = "Game Over";
+            restart.gameObject.SetActive(true);
+        }
     }
 
+    void Restart()
+    {
+        gameOverText.text = "";
+        restart.gameObject.SetActive(false);
+        gridScript.GridSetup();
+    }
     void FixedUpdate()
     {
         if (blocksScript.IsEmpty)
@@ -54,18 +73,20 @@ public class GameScreen : MonoBehaviour
 
             if (touch.phase == TouchPhase.Ended)
             {
-                foreach (var clickedTile in added)
+                foreach (var clickedTile in addedTiles)
                 {
-                    var matchedTiles = gridScript.GetMatches(clickedTile.column, clickedTile.row, clickedTile.Color);
+                    var matchedTiles = gridScript.GetMatches(clickedTile.Column, clickedTile.Row, clickedTile.Color);
                     if (matchedTiles.Count >= 3)
                     {
                         foreach (var match in matchedTiles)
                         {
                             match.Color = Color.white;
                         }
+                        score += 10;
                     }
                 }
-                added.Clear();
+                UpdateScore();
+                addedTiles.Clear();
             }
         }
 
@@ -85,18 +106,20 @@ public class GameScreen : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             {
-                foreach (var clickedTile in added)
+                foreach (var clickedTile in addedTiles)
                 {
-                    var matchedTiles = gridScript.GetMatches(clickedTile.column, clickedTile.row, clickedTile.Color);
+                    var matchedTiles = gridScript.GetMatches(clickedTile.Column, clickedTile.Row, clickedTile.Color);
                     if (matchedTiles.Count >= 3)
                     {
                         foreach (var match in matchedTiles)
                         {
                             match.Color = Color.white;
                         }
+                        score += 10;
                     }
                 }
-                added.Clear();
+                UpdateScore();
+                addedTiles.Clear();
             }
         }
 #endif
@@ -113,5 +136,13 @@ public class GameScreen : MonoBehaviour
             return 3;
         else
             return 4;
+    }
+
+    void UpdateScore()
+    {
+        if (score > hiscore)
+            hiscore = score;
+        scoreText.text = "Score: " + score;
+        hiScoreText.text = "HiScore: " + hiscore;
     }
 }

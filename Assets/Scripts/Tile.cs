@@ -7,7 +7,9 @@ public class Tile : MonoBehaviour
 {
     private Material mat;
 
-    public int row, column;
+    private int row, column;
+    public int Row { get; set; }
+    public int Column { get; set; }
     void Awake()
     {
         mat = GetComponent<Renderer>().material;

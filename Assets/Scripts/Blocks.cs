@@ -19,8 +19,8 @@ public class Blocks : MonoBehaviour
             Tile instance = Instantiate(emtpyTile, new Vector2(blocksHolder.transform.localPosition.x + i + xOffset, blocksHolder.transform.position.y), Quaternion.identity);
             instance.transform.SetParent(blocksHolder);
             instance.Color = colorCollection[Random.Range(0, colorCollection.Count)];
-            instance.row = -1;
-            instance.column = -1;
+            instance.Row = -1;
+            instance.Column = -1;
             blocks.Add(instance);
             xOffset += offsetValue;
         }
